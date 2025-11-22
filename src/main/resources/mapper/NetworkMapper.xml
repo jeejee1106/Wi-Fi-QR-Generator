@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.project.network.mapper.NetworkMapper">
+
+    <!-- 회원 저장 -->
+    <insert id="addNetwork" useGeneratedKeys="true" keyProperty="networkSeq" parameterType="com.example.project.network.dto.request.AddNetworkReq">
+
+        INSERT INTO wifi_network (
+            user_seq,
+            ssid,
+            password,
+            auth_type,
+            hidden_yn,
+            memo,
+            active_yn
+        )
+        VALUES (
+            #{userSeq},
+            #{ssid},
+            #{password},
+            #{authType},
+            #{hiddenYn},
+            #{memo},
+            #{activeYn}
+        )
+    </insert>
+
+</mapper>
