@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.project.qrcode.mapper.QrCodeMapper">
+
+    <insert id="createQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq" parameterType="com.example.project.qrcode.dto.response.CreateQrCodeRes">
+
+        INSERT INTO wifi_qr_code (
+            network_seq,
+            qr_content,
+            image_path,
+            expires_at
+        )
+        VALUES (
+            #{networkSeq},
+            #{qrContent},
+            #{imagePath},
+            #{expiresAt}
+        )
+    </insert>
+
+
+</mapper>

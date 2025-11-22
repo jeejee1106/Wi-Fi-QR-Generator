@@ -3,7 +3,6 @@
 
 <mapper namespace="com.example.project.network.mapper.NetworkMapper">
 
-    <!-- 회원 저장 -->
     <insert id="addNetwork" useGeneratedKeys="true" keyProperty="networkSeq" parameterType="com.example.project.network.dto.request.AddNetworkReq">
 
         INSERT INTO wifi_network (
@@ -25,5 +24,20 @@
             #{activeYn}
         )
     </insert>
+
+    <select id="getNetworkById" resultType="com.example.project.network.dto.response.AddNetworkRes">
+        SELECT
+              network_seq
+            , user_seq
+            , ssid
+            , password
+            , auth_type
+            , hidden_yn
+        FROM wifi_network
+        WHERE 1=1
+            AND network_seq = #{networkSeq}
+            AND hidden_yn = "N"
+            AND active_yn = "Y"
+    </select>
 
 </mapper>
