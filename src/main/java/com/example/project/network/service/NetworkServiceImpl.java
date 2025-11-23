@@ -17,8 +17,9 @@ public class NetworkServiceImpl implements NetworkService {
     private final NetworkMapper networkMapper;
 
     @Override
-    public AddNetworkRes addNetwork(AddNetworkReq req) {
+    public AddNetworkRes addNetwork(AddNetworkReq req,  Long userSeq) {
 
+        req.setUserSeq(userSeq);
         networkMapper.addNetwork(req);
 
         AddNetworkRes res = AddNetworkRes.of(req);

@@ -5,6 +5,6 @@ import com.example.project.network.dto.response.AddNetworkRes;
 
 public interface NetworkService {
 
-    AddNetworkRes addNetwork(AddNetworkReq req);
+    AddNetworkRes addNetwork(AddNetworkReq req, Long userSeq);
 
 }

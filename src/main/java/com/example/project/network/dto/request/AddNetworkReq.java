@@ -1,16 +1,19 @@
 package com.example.project.network.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Schema(description = "네트워크 등록")
 public class AddNetworkReq {
 
     @Schema(description = "유저 고유번호", example = "1")
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Setter
     private Long userSeq;
 
     @Schema(description = "ssid", example = "1234")
