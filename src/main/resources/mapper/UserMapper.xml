@@ -3,11 +3,30 @@
 
 <mapper namespace="com.example.project.user.mapper.UserMapper">
 
+    <resultMap id="UserResultMap" type="com.example.project.user.domain.User">
+        <id     property="userSeq" column="user_seq"/>
+        <result property="email"   column="email"/>
+        <result property="password" column="password"/>
+        <result property="name"    column="name"/>
+        <result property="role"    column="role"/>
+        <result property="delYn" column="del_yn"/>
+    </resultMap>
+
     <!-- 이메일 중복 체크 -->
     <select id="existsByEmail" resultType="int">
         SELECT COUNT(1)
         FROM users
+        WHERE 1=1
+            AND email = #{email}
+            AND del_yn = "N"
+    </select>
+
+    <!-- 이메일로 유저 조회 (로그인, 시큐리티용) -->
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT user_seq, email, password, name, role, del_yn
+        FROM users
         WHERE email = #{email}
+          AND del_yn = 'N'
     </select>
 
     <!-- 회원 저장 -->
