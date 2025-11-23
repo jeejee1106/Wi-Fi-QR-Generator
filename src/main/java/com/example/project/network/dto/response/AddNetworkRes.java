@@ -1,10 +1,7 @@
 package com.example.project.network.dto.response;
 
 import com.example.project.network.dto.request.AddNetworkReq;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -14,6 +11,7 @@ public class AddNetworkRes {
 
     private Long userSeq;
     private String ssid;
+    @Setter
     private String password;
     private String authType;
     private String hiddenYn;

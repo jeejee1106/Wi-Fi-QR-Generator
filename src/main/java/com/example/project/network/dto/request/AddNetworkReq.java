@@ -21,6 +21,7 @@ public class AddNetworkReq {
     private String ssid;
 
     @Schema(description = "네트워크 비밀번호", example = "1234")
+    @Setter
     private String password;
 
     @Schema(description = "보안 타입", example = "WPA") // WPA, WEP, NOPASS
