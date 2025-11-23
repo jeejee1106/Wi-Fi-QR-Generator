@@ -3,18 +3,27 @@
 
 <mapper namespace="com.example.project.user.mapper.UserMapper">
 
+    <!-- 이메일 중복 체크 -->
+    <select id="existsByEmail" resultType="int">
+        SELECT COUNT(1)
+        FROM users
+        WHERE email = #{email}
+    </select>
+
     <!-- 회원 저장 -->
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="userSeq" parameterType="com.example.project.user.dto.request.UserJoinReq">
 
         INSERT INTO users (
             email,
             password,
-            name
+            name,
+            role
         )
         VALUES (
             #{email},
             #{password},
-            #{name}
+            #{name},
+            #{role}
         )
     </insert>
 

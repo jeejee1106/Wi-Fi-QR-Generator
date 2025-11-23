@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Schema(description = "회원가입")
@@ -15,11 +16,17 @@ public class UserJoinReq {
 
     @Schema(description = "비밀번호", example = "1234")
     @NotNull
+    @Setter //비밀번호 암호화를 위한 setter
     private String password;
 
     @Schema(description = "이름", example = "이순신")
     @NotNull
     private String name;
+
+    @Schema(description = "권한", example = "USER")
+    @NotNull
+    @Setter //권한 설정을 위한 setter. NotNull로 설정하긴 했으나, service단에서 한 번 더 null 체크함.
+    private String role;
 
     @Schema(description = "유저 고유번호") //유저 등록 후 반환 받을 때 사용
     @Hidden

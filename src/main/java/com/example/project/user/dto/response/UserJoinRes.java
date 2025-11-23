@@ -1,24 +1,26 @@
 package com.example.project.user.dto.response;
 
+import com.example.project.user.dto.request.UserJoinReq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserJoinRes {
 
-    private boolean success;
     private Long userSeq;
     private String email;
-    private String message;
+    private String name;
+    private String role;
 
-    // 성공용 팩토리 메서드
-    public static UserJoinRes success(Long userSeq, String email) {
-        return new UserJoinRes(true, userSeq, email, "회원가입이 완료되었습니다.");
-    }
-
-    // 실패용 팩토리 메서드
-    public static UserJoinRes fail(String email, String message) {
-        return new UserJoinRes(false, null, email, message);
+    public static UserJoinRes of(UserJoinReq req) {
+        UserJoinRes res = new UserJoinRes();
+        res.userSeq = req.getUserSeq();
+        res.email = req.getEmail();
+        res.name = req.getName();
+        res.role = req.getRole();
+        return res;
     }
 }
