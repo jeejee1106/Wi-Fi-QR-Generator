@@ -9,5 +9,6 @@ public interface QrCodeService {
     CreateQrCodeRes createQrCode(CreateQrCodeReq req);
     CreateQrCodeRes createQrCodeWithUrlContent(CreateQrCodeReq req);
     WifiConnectRes scanWifiQr(Long qrCodeSeq);
+    void deactivateQr(Long qrCodeSeq, Long userSeq);
 
 }

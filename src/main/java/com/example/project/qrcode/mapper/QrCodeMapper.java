@@ -14,4 +14,5 @@ public interface QrCodeMapper {
     void insertEmptyQrCode(CreateQrCodeReq req);
     void updateQrContentAndImagePath(Long qrCodeSeq, String qrContent, String imagePath);
     QrCode findByQrCodeSeq(@Param("qrCodeSeq") Long qrCodeSeq);
+    void deactivate(Long qrCodeSeq);
 }

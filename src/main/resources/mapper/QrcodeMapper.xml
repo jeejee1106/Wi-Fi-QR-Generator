@@ -48,4 +48,13 @@
         WHERE
             qr_code_seq = #{qrCodeSeq}
     </select>
+
+    <update id="deactivate" parameterType="long">
+        UPDATE wifi_qr_code
+        SET
+            active_yn = 'N',
+            update_at = NOW()
+        WHERE qr_code_seq = #{qrCodeSeq}
+    </update>
+
 </mapper>

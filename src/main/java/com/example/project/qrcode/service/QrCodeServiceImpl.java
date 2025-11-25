@@ -157,4 +157,33 @@ public class QrCodeServiceImpl implements QrCodeService {
                 .hiddenYn(networkRes.getHiddenYn())
                 .build();
     }
+
+    public void deactivateQr(Long qrCodeSeq, Long userSeq) {
+
+        //1. QR 코드 조회
+        QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
+        if (qrCode == null) {
+            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+        }
+
+        //2. QR에서 networkSeq 가져옴
+        Long networkSeq = qrCode.getNetworkSeq();
+        if (networkSeq == null) {
+            throw new IllegalStateException("네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+        }
+
+        //3. 네트워크 정보 조회
+        AddNetworkRes network = networkMapper.getNetworkById(networkSeq);
+        if (network == null) {
+            throw new IllegalStateException("네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+        }
+
+        //4. 권한 체크: 네트워크 소유자와 현재 로그인한 user 비교
+        if (!network.getUserSeq().equals(userSeq)) {
+            throw new IllegalStateException("권한이 없습니다. networkSeq=" + networkSeq);
+        }
+
+        //5. 실제 비활성화
+        qrCodeMapper.deactivate(qrCodeSeq);
+    }
 }

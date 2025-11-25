@@ -1,5 +1,6 @@
 package com.example.project.qrcode.controller;
 
+import com.example.project.common.security.CustomUserDetails;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -46,5 +48,12 @@ public class QrCodeController {
     public ResponseEntity<WifiConnectRes> scanWifiQr(@PathVariable Long qrCodeSeq) {
         WifiConnectRes res = qrCodeService.scanWifiQr(qrCodeSeq);
         return ResponseEntity.ok(res);
+    }
+
+    //추후 서비스 더 커지면 QrManageController 등으로 뺄 수 있음
+    @PatchMapping("/deactivate/{qrCodeSeq}")
+    public void deactivate(@PathVariable Long qrCodeSeq, @AuthenticationPrincipal CustomUserDetails user) {
+        Long userSeq = user.getUserSeq();
+        qrCodeService.deactivateQr(qrCodeSeq, userSeq);
     }
 }
