@@ -2,9 +2,11 @@ package com.example.project.qrcode.controller;
 
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
+import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.service.QrCodeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,4 +30,20 @@ public class QrCodeController {
                 .body(res);
     }
 
+    //위는 와이파이 주소 자체로 qr 생성. 이건 url로 qr 생성
+    @PostMapping("/url")
+    public ResponseEntity<CreateQrCodeRes> createQrCodeWithUrlContent(@RequestBody CreateQrCodeReq req) {
+        CreateQrCodeRes res = qrCodeService.createQrCodeWithUrlContent(req);
+
+        return ResponseEntity
+                .created(URI.create("/api/qr-codes/"))
+                .body(res);
+    }
+
+    //위 /url 컨트롤러를 타고 qr을 만들었고, 그 qr을 찍으면 들어올 컨트롤러임.
+    @GetMapping("/url/{qrCodeSeq}")
+    public ResponseEntity<WifiConnectRes> scanWifiQr(@PathVariable Long qrCodeSeq) {
+        WifiConnectRes res = qrCodeService.getWifiInfoByQrCodeSeq(qrCodeSeq);
+        return ResponseEntity.ok(res);
+    }
 }

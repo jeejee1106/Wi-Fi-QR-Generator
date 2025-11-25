@@ -19,5 +19,33 @@
         )
     </insert>
 
+    <insert id="insertEmptyQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq">
+        INSERT INTO wifi_qr_code (network_seq)
+        VALUES (#{networkSeq});
+    </insert>
 
+    <update id="updateQrContentAndImagePath">
+        UPDATE
+            wifi_qr_code
+        SET
+            qr_content = #{qrContent},
+            image_path = #{imagePath}
+        WHERE
+            qr_code_seq = #{qrCodeSeq}
+    </update>
+
+    <select id="findByQrCodeSeq" resultType="com.example.project.qrcode.domain.QrCode">
+        SELECT
+            qr_code_seq,
+            network_seq,
+            qr_content,
+            image_path,
+            expires_at,
+            active_yn,
+            created_at
+        FROM
+            wifi_qr_code
+        WHERE
+            qr_code_seq = #{qrCodeSeq}
+    </select>
 </mapper>

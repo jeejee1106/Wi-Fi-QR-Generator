@@ -5,8 +5,10 @@ import com.example.project.common.util.QrImageGenerator;
 import com.example.project.common.util.WifiQrContentBuilder;
 import com.example.project.network.dto.response.AddNetworkRes;
 import com.example.project.network.mapper.NetworkMapper;
+import com.example.project.qrcode.domain.QrCode;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
+import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.mapper.QrCodeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,9 @@ public class QrCodeServiceImpl implements QrCodeService {
 
     @Value("${qr.image.dir}")
     private String qrImageOutputDir;
+
+    @Value("${qr.base.url}")
+    private String qrBaseUrl;
 
     @Override
     public CreateQrCodeRes createQrCode(CreateQrCodeReq req) {
@@ -77,5 +82,63 @@ public class QrCodeServiceImpl implements QrCodeService {
         qrCodeMapper.createQrCode(createQrCodeRes);
 
         return createQrCodeRes;
+    }
+
+    public CreateQrCodeRes createQrCodeWithUrlContent(CreateQrCodeReq req) {
+
+        // 1. 네트워크 정보 조회
+        AddNetworkRes networkRes = networkMapper.getNetworkById(req);
+        String ssid = networkRes.getSsid();
+
+        // 2. 먼저 QR row를 INSERT 해서 시퀀스 번호 생성
+        qrCodeMapper.insertEmptyQrCode(req);
+        Long qrCodeSeq = req.getQrCodeSeq();
+
+        // 3. URL 생성
+        String qrUrl = qrBaseUrl + "/qr/url/" + qrCodeSeq;
+
+        // 4. QR 이미지 생성
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        String fileName = "wifi_" + ssid + "_" + now;
+        String imagePath = QrImageGenerator.generatePng(qrUrl, qrImageOutputDir, fileName);
+
+        // 5. URL, 이미지 경로 업데이트
+        qrCodeMapper.updateQrContentAndImagePath(qrCodeSeq, qrUrl, imagePath);
+
+        // 6. 반환
+        return new CreateQrCodeRes(
+                qrCodeSeq,
+                req.getNetworkSeq(),
+                qrUrl,
+                imagePath,
+                null
+        );
+    }
+
+    public WifiConnectRes getWifiInfoByQrCodeSeq(Long qrCodeSeq) {
+
+        // 1. QR 코드 조회
+        QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
+        if (qrCode == null) {
+            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq);
+        }
+
+        // 2. 연결된 네트워크 조회
+        Long networkSeq = qrCode.getNetworkSeq();
+        AddNetworkRes networkRes = networkMapper.getNetworkById(networkSeq);
+        if (networkRes == null) {
+            throw new IllegalStateException("연결된 Wi-Fi 네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+        }
+
+        // 3. 비밀번호 복호화
+        String decryptedPw = wifiPasswordEncryptor.decrypt(networkRes.getPassword());
+
+        // 4. 응답 DTO 생성
+        return WifiConnectRes.builder()
+                .ssid(networkRes.getSsid())
+                .password(decryptedPw)
+                .authType(networkRes.getAuthType())
+                .hiddenYn(networkRes.getHiddenYn())
+                .build();
     }
 }
