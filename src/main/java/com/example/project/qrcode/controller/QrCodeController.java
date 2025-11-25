@@ -41,9 +41,10 @@ public class QrCodeController {
     }
 
     //위 /url 컨트롤러를 타고 qr을 만들었고, 그 qr을 찍으면 들어올 컨트롤러임.
+    //QR ID로 DB에서 Wi-Fi 정보를 조회한다. 조회한 정보를 클라이언트에게 보여준다
     @GetMapping("/url/{qrCodeSeq}")
     public ResponseEntity<WifiConnectRes> scanWifiQr(@PathVariable Long qrCodeSeq) {
-        WifiConnectRes res = qrCodeService.getWifiInfoByQrCodeSeq(qrCodeSeq);
+        WifiConnectRes res = qrCodeService.scanWifiQr(qrCodeSeq);
         return ResponseEntity.ok(res);
     }
 }

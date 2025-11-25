@@ -8,6 +8,6 @@ public interface QrCodeService {
 
     CreateQrCodeRes createQrCode(CreateQrCodeReq req);
     CreateQrCodeRes createQrCodeWithUrlContent(CreateQrCodeReq req);
-    WifiConnectRes getWifiInfoByQrCodeSeq(Long qrCodeSeq);
+    WifiConnectRes scanWifiQr(Long qrCodeSeq);
 
 }

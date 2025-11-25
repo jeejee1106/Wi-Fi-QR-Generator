@@ -76,7 +76,7 @@ public class QrCodeServiceImpl implements QrCodeService {
                 req.getNetworkSeq(),
                 dbQrContent,// DB에는 암호문 버전 저장
                 imagePath,
-                null
+                req.getExpiresAt()
         );
 
         qrCodeMapper.createQrCode(createQrCodeRes);
@@ -111,29 +111,45 @@ public class QrCodeServiceImpl implements QrCodeService {
                 req.getNetworkSeq(),
                 qrUrl,
                 imagePath,
-                null
+                req.getExpiresAt()
         );
     }
 
-    public WifiConnectRes getWifiInfoByQrCodeSeq(Long qrCodeSeq) {
+    public WifiConnectRes scanWifiQr(Long qrCodeSeq) {
 
-        // 1. QR 코드 조회
+        //1. QR 코드 조회
         QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
         if (qrCode == null) {
-            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq);
+            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
         }
 
-        // 2. 연결된 네트워크 조회
+        //2. 비활성 QR 체크
+        if (!"Y".equals(qrCode.getActiveYn())) {
+            // 410 Gone or 400
+            throw new IllegalArgumentException("사용할 수 없는 QR코드입니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+        }
+
+        //3. 만료시간 체크
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expiresAt = qrCode.getExpiresAt();
+        if (qrCode.getExpiresAt() != null && !expiresAt.isAfter(now)) {
+            // 만료된 순간 바로 비활성화로 바꿔버리기 -> 스케줄러 돌릴지 고민..
+//            qrCodeMapper.deactivate(qrCodeSeq);
+
+            throw new IllegalArgumentException("사용할 수 없는 QR코드입니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+        }
+
+        //4. 연결된 네트워크 조회
         Long networkSeq = qrCode.getNetworkSeq();
         AddNetworkRes networkRes = networkMapper.getNetworkById(networkSeq);
         if (networkRes == null) {
             throw new IllegalStateException("연결된 Wi-Fi 네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
         }
 
-        // 3. 비밀번호 복호화
+        //5. 비밀번호 복호화
         String decryptedPw = wifiPasswordEncryptor.decrypt(networkRes.getPassword());
 
-        // 4. 응답 DTO 생성
+        //6. 응답 DTO 생성
         return WifiConnectRes.builder()
                 .ssid(networkRes.getSsid())
                 .password(decryptedPw)
