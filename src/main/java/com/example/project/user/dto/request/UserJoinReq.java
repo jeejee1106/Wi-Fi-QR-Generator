@@ -23,11 +23,6 @@ public class UserJoinReq {
     @NotNull
     private String name;
 
-    @Schema(description = "권한", example = "USER")
-    @NotNull
-    @Setter //권한 설정을 위한 setter. NotNull로 설정하긴 했으나, service단에서 한 번 더 null 체크함.
-    private String role;
-
     @Schema(description = "유저 고유번호") //유저 등록 후 반환 받을 때 사용
     @Hidden
     private Long userSeq;

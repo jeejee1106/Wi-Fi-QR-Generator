@@ -3,20 +3,41 @@
 
 <mapper namespace="com.example.project.qrcode.mapper.QrCodeMapper">
 
+    <!-- TODO : guest_yn도 파라미터로 받기. network처럼 -->
     <insert id="createQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq" parameterType="com.example.project.qrcode.dto.response.CreateQrCodeRes">
 
         INSERT INTO wifi_qr_code (
             network_seq,
             qr_content,
             image_path,
+            guest_yn,
             expires_at
         )
         VALUES (
             #{networkSeq},
             #{qrContent},
             #{imagePath},
+            "N",
             #{expiresAt}
         )
+    </insert>
+
+    <insert id="createAnonymousQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq" parameterType="com.example.project.qrcode.domain.QrCode">
+
+        INSERT INTO wifi_qr_code (
+            network_seq,
+            qr_content,
+            image_path,
+            guest_yn,
+            expires_at
+        )
+        VALUES (
+               #{networkSeq},
+               #{qrContent},
+               #{imagePath},
+               "Y",
+               #{expiresAt}
+           )
     </insert>
 
     <insert id="insertEmptyQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq">

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class CreateQrCodeRes {
 
     private Long qrCodeSeq;
-    private Long NetworkSeq;
+    private Long networkSeq;
     private String qrContent;
     private String imagePath;   // /qr-images/xxx.png 같은 경로
     private LocalDate expiresAt;
@@ -26,7 +26,7 @@ public class CreateQrCodeRes {
                                      LocalDate expiresAt) {
         CreateQrCodeRes res = new CreateQrCodeRes();
         res.qrCodeSeq = qrCodeSeq;
-        res.NetworkSeq = networkSeq;
+        res.networkSeq = networkSeq;
         res.qrContent = qrContent;
         res.imagePath = imagePath;
         res.expiresAt = expiresAt;

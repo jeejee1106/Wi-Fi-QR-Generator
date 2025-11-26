@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public interface QrCodeMapper {
 
     void createQrCode(CreateQrCodeRes req);
+    void createAnonymousQrCode(CreateQrCodeRes req);
     void insertEmptyQrCode(CreateQrCodeReq req);
     void updateQrInfo(Long qrCodeSeq, String qrContent, String imagePath, LocalDate expiresAt);
     QrCode findByQrCodeSeq(@Param("qrCodeSeq") Long qrCodeSeq);

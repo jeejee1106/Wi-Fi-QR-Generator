@@ -5,9 +5,11 @@ import com.example.project.common.exception.ErrorCode;
 import com.example.project.common.security.crypto.WifiPasswordEncryptor;
 import com.example.project.common.util.QrImageGenerator;
 import com.example.project.common.util.WifiQrContentBuilder;
+import com.example.project.network.dto.request.AddNetworkReq;
 import com.example.project.network.dto.response.AddNetworkRes;
 import com.example.project.network.mapper.NetworkMapper;
 import com.example.project.qrcode.domain.QrCode;
+import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
@@ -156,6 +158,63 @@ public class QrCodeServiceImpl implements QrCodeService {
                 .hiddenYn(networkRes.getHiddenYn())
                 .build();
     }
+
+    public CreateQrCodeRes createAnonymousQrCode(CreateAnonymousQrReq req) {
+
+        //1. 평문 pass, 암호화 pass 둘 다 변수에 저장
+        String plainPw = req.getPassword(); //평문 password
+        String encryptedPw = wifiPasswordEncryptor.encrypt(req.getPassword()); //암호화 password
+
+        String ssid = req.getSsid();
+        String authType = req.getAuthType();
+        String hiddenYn = req.getHiddenYn();
+
+        //2. 네트워크 저장 (게스트 플래그 Y)
+        AddNetworkReq network = AddNetworkReq.of(
+                null,
+                ssid,
+                encryptedPw,
+                authType,
+                hiddenYn,
+                req.getMemo(),
+                req.getActiveYn(),
+                "Y");
+        networkMapper.addNetwork(network);
+
+        //3. QR 내용 문자열 생성
+        String plainQrContent = WifiQrContentBuilder.build(
+                ssid,
+                plainPw, //평문 비밀번호
+                authType,
+                hiddenYn
+        );
+
+        //4. QR PNG 생성
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        String fileName = "wifi_" + ssid + "_" + now;
+        String imagePath = QrImageGenerator.generatePng(plainQrContent, qrImageOutputDir, fileName);
+
+        //5. DB 저장용 QR 콘텐츠 (다시 암호화된 비밀번호로)
+        String dbQrContent = WifiQrContentBuilder.build(
+                ssid,
+                encryptedPw,
+                authType,
+                hiddenYn
+        );
+
+        //6. DB 저장
+        CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
+                req.getQrCodeSeq(),
+                network.getNetworkSeq(),
+                dbQrContent,// DB에는 암호문 버전 저장
+                imagePath,
+                req.getExpiresAt()
+        );
+        qrCodeMapper.createAnonymousQrCode(createQrCodeRes);
+
+        return createQrCodeRes;
+    }
+
 
     public void deactivateQr(Long qrCodeSeq, Long userSeq) {
 

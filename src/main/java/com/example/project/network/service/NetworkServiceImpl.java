@@ -31,7 +31,9 @@ public class NetworkServiceImpl implements NetworkService {
         //3. 와이파이 정보 저장
         networkMapper.addNetwork(req);
 
-        AddNetworkRes res = AddNetworkRes.of(req);
-        return res;
+        //TODO : 일단 하드코딩. 추후 of를 쓰던 해야함.
+        req.setGuestYn("N");
+
+        return AddNetworkRes.of(req);
     }
 }

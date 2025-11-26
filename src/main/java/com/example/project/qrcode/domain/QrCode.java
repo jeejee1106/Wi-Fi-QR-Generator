@@ -16,6 +16,7 @@ public class QrCode {
     private String imagePath;
     private LocalDate expiresAt;
     private String activeYn;
+    private String guestYn;
     private LocalDateTime createdAt;
 
 }

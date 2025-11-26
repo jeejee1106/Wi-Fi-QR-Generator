@@ -33,11 +33,6 @@ public class UserServiceImpl implements UserService {
         String encodedPw = passwordEncoder.encode(req.getPassword());
         req.setPassword(encodedPw);
 
-        // 3. 기본 권한 설정
-        if (req.getRole() == null) {
-            req.setRole("ROLE_USER");
-        }
-
         //4. db 저장
         userMapper.insertUser(req);
 

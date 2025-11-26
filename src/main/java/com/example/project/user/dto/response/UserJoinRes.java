@@ -20,7 +20,7 @@ public class UserJoinRes {
         res.userSeq = req.getUserSeq();
         res.email = req.getEmail();
         res.name = req.getName();
-        res.role = req.getRole();
+//        res.role = req.getRole();
         return res;
     }
 }

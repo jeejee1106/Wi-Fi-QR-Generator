@@ -12,7 +12,8 @@
             auth_type,
             hidden_yn,
             memo,
-            active_yn
+            active_yn,
+            guest_yn
         )
         VALUES (
             #{userSeq},
@@ -21,7 +22,8 @@
             #{authType},
             #{hiddenYn},
             #{memo},
-            #{activeYn}
+            #{activeYn},
+            #{guestYn}
         )
     </insert>
 
