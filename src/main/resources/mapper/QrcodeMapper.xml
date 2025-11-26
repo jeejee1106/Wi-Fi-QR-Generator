@@ -24,12 +24,13 @@
         VALUES (#{networkSeq});
     </insert>
 
-    <update id="updateQrContentAndImagePath">
+    <update id="updateQrInfo">
         UPDATE
             wifi_qr_code
         SET
             qr_content = #{qrContent},
-            image_path = #{imagePath}
+            image_path = #{imagePath},
+            expires_at = #{expiresAt}
         WHERE
             qr_code_seq = #{qrCodeSeq}
     </update>

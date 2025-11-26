@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -102,8 +103,8 @@ public class QrCodeServiceImpl implements QrCodeService {
         String fileName = "wifi_" + ssid + "_" + now;
         String imagePath = QrImageGenerator.generatePng(qrUrl, qrImageOutputDir, fileName);
 
-        // 5. URL, 이미지 경로 업데이트
-        qrCodeMapper.updateQrContentAndImagePath(qrCodeSeq, qrUrl, imagePath);
+        // 5. QR정보 UPDATE
+        qrCodeMapper.updateQrInfo(qrCodeSeq, qrUrl, imagePath, req.getExpiresAt());
 
         // 6. 반환
         return new CreateQrCodeRes(
@@ -130,8 +131,8 @@ public class QrCodeServiceImpl implements QrCodeService {
         }
 
         //3. 만료시간 체크
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiresAt = qrCode.getExpiresAt();
+        LocalDate now = LocalDate.now();
+        LocalDate expiresAt = qrCode.getExpiresAt();
         if (qrCode.getExpiresAt() != null && !expiresAt.isAfter(now)) {
             // 만료된 순간 바로 비활성화로 바꿔버리기 -> 스케줄러 돌릴지 고민..
 //            qrCodeMapper.deactivate(qrCodeSeq);
