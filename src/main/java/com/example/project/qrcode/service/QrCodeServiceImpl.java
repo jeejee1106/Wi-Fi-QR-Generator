@@ -77,13 +77,12 @@ public class QrCodeServiceImpl implements QrCodeService {
 
         //5. DB 저장
         CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
-                req.getQrCodeSeq(),
                 req.getNetworkSeq(),
                 dbQrContent,// DB에는 암호문 버전 저장
                 imagePath,
-                req.getExpiresAt()
+                req.getExpiresAt(),
+                "N"
         );
-
         qrCodeMapper.createQrCode(createQrCodeRes);
 
         return createQrCodeRes;
@@ -116,7 +115,8 @@ public class QrCodeServiceImpl implements QrCodeService {
                 req.getNetworkSeq(),
                 qrUrl,
                 imagePath,
-                req.getExpiresAt()
+                req.getExpiresAt(),
+                "N"
         );
     }
 
@@ -204,13 +204,13 @@ public class QrCodeServiceImpl implements QrCodeService {
 
         //6. DB 저장
         CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
-                req.getQrCodeSeq(),
                 network.getNetworkSeq(),
                 dbQrContent,// DB에는 암호문 버전 저장
                 imagePath,
-                req.getExpiresAt()
+                req.getExpiresAt(),
+                "Y"
         );
-        qrCodeMapper.createAnonymousQrCode(createQrCodeRes);
+        qrCodeMapper.createQrCode(createQrCodeRes);
 
         return createQrCodeRes;
     }
