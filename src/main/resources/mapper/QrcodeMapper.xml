@@ -50,6 +50,7 @@
             qr_code_seq = #{qrCodeSeq}
     </select>
 
+    <!-- QrCodeMapper.deactivate -->
     <update id="deactivate" parameterType="long">
         UPDATE wifi_qr_code
         SET

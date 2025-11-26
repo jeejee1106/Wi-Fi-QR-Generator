@@ -1,5 +1,7 @@
 package com.example.project.qrcode.service;
 
+import com.example.project.common.exception.BusinessException;
+import com.example.project.common.exception.ErrorCode;
 import com.example.project.common.security.crypto.WifiPasswordEncryptor;
 import com.example.project.common.util.QrImageGenerator;
 import com.example.project.common.util.WifiQrContentBuilder;
@@ -121,30 +123,26 @@ public class QrCodeServiceImpl implements QrCodeService {
         //1. QR 코드 조회
         QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
         if (qrCode == null) {
-            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+            throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
         }
 
         //2. 비활성 QR 체크
         if (!"Y".equals(qrCode.getActiveYn())) {
-            // 410 Gone or 400
-            throw new IllegalArgumentException("사용할 수 없는 QR코드입니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+            throw new BusinessException(ErrorCode.QR_INACTIVE); //410
         }
 
         //3. 만료시간 체크
         LocalDate now = LocalDate.now();
         LocalDate expiresAt = qrCode.getExpiresAt();
         if (qrCode.getExpiresAt() != null && !expiresAt.isAfter(now)) {
-            // 만료된 순간 바로 비활성화로 바꿔버리기 -> 스케줄러 돌릴지 고민..
-//            qrCodeMapper.deactivate(qrCodeSeq);
-
-            throw new IllegalArgumentException("사용할 수 없는 QR코드입니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+            throw new BusinessException(ErrorCode.QR_EXPIRED); //410
         }
 
         //4. 연결된 네트워크 조회
         Long networkSeq = qrCode.getNetworkSeq();
         AddNetworkRes networkRes = networkMapper.getNetworkById(networkSeq);
         if (networkRes == null) {
-            throw new IllegalStateException("연결된 Wi-Fi 네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
         }
 
         //5. 비밀번호 복호화
@@ -164,27 +162,27 @@ public class QrCodeServiceImpl implements QrCodeService {
         //1. QR 코드 조회
         QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
         if (qrCode == null) {
-            throw new IllegalArgumentException("QR 코드가 존재하지 않습니다. qrCodeSeq=" + qrCodeSeq); //QR_NOT_FOUND
+            throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
         }
 
         //2. QR에서 networkSeq 가져옴
         Long networkSeq = qrCode.getNetworkSeq();
         if (networkSeq == null) {
-            throw new IllegalStateException("네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
         }
 
         //3. 네트워크 정보 조회
         AddNetworkRes network = networkMapper.getNetworkById(networkSeq);
         if (network == null) {
-            throw new IllegalStateException("네트워크가 존재하지 않습니다. networkSeq=" + networkSeq);
+            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
         }
 
         //4. 권한 체크: 네트워크 소유자와 현재 로그인한 user 비교
         if (!network.getUserSeq().equals(userSeq)) {
-            throw new IllegalStateException("권한이 없습니다. networkSeq=" + networkSeq);
+            throw new BusinessException(ErrorCode.AUTH_FORBIDDEN); //403
         }
 
-        //5. 실제 비활성화
+        //5. active_yn UPDATE (비활성화)
         qrCodeMapper.deactivate(qrCodeSeq);
     }
 }

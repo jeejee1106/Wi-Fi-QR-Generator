@@ -1,5 +1,7 @@
 package com.example.project.user.service;
 
+import com.example.project.common.exception.BusinessException;
+import com.example.project.common.exception.ErrorCode;
 import com.example.project.user.dto.request.UserJoinReq;
 import com.example.project.user.dto.response.UserJoinRes;
 import com.example.project.user.mapper.UserMapper;
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
         // 1. 이메일 중복 체크
         int count = userMapper.existsByEmail(req.getEmail());
         if (count > 0) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new BusinessException(ErrorCode.USER_EMAIL_DUPLICATED);
         }
 
         // 2. 비밀번호 암호화

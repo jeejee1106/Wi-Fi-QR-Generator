@@ -39,7 +39,7 @@ public class SecurityConfig {
             // why? 로그인 과정이 아니어도 요청마다 토큰을 먼저 검사해서SecurityContextHolder 에 인증을 넣어줄 수 있도록.
             .exceptionHandling(ex -> ex
                     .authenticationEntryPoint((request, response, authException) -> {
-                        log.error("UNAUTHORIZED: {} {}", request.getMethod(), request.getRequestURI());
+                        log.warn("UNAUTHORIZED: {} {}", request.getMethod(), request.getRequestURI());
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 혹은 403
                         response.setContentType("application/json;charset=UTF-8");
                         response.getWriter().write("{\"code\":\"AUTH_REQUIRED\",\"message\":\"인증이 필요합니다.\"}");
