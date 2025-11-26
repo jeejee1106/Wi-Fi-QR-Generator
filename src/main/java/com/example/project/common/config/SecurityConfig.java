@@ -1,7 +1,9 @@
 package com.example.project.common.config;
 
 import com.example.project.common.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     @Bean
@@ -31,10 +34,17 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             // JWT 필터 등록 부분!!
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             //UsernamePasswordAuthenticationFilter보다 jwtAuthenticationFilter가 꼭 앞에 있어야함.
             // why? 로그인 과정이 아니어도 요청마다 토큰을 먼저 검사해서SecurityContextHolder 에 인증을 넣어줄 수 있도록.
-
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        log.error("UNAUTHORIZED: {} {}", request.getMethod(), request.getRequestURI());
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 혹은 403
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"code\":\"AUTH_REQUIRED\",\"message\":\"인증이 필요합니다.\"}");
+                    })
+            );
         return http.build();
     }
 
