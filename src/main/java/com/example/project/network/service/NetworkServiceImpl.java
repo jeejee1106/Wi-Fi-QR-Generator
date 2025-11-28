@@ -22,18 +22,25 @@ public class NetworkServiceImpl implements NetworkService {
     @Transactional
     public AddNetworkRes addNetwork(AddNetworkReq req,  Long userSeq) {
 
-        //1. 비밀번호 암호화
-        String encryptedPassword = wifiPasswordEncryptor.encrypt(req.getPassword());
-        req.setPassword(encryptedPassword);
+        //1. 비밀번호 여부 체크
+        boolean hasPassword = req.getPassword() != null && !req.getPassword().isBlank();
+
+        if (!hasPassword) {
+            req.setAuthType("nopass");
+            req.setPassword(null);
+        } else {
+            // 있으면 비밀번호 암호화
+            String encryptedPassword = wifiPasswordEncryptor.encrypt(req.getPassword());
+            req.setPassword(encryptedPassword);
+        }
 
         //2. 토큰에 있는 유저 정보 넣기
+        req.setGuestYn("N"); //무조건 로그인해서 들어오기 때문에 "N" 넣어주기
         req.setUserSeq(userSeq);
 
         //3. 와이파이 정보 저장
         networkMapper.addNetwork(req);
 
-        //TODO : 일단 하드코딩. 추후 of를 쓰던 해야함.
-        req.setGuestYn("N");
 
         return AddNetworkRes.of(req);
     }

@@ -25,6 +25,7 @@ public class AddNetworkReq {
     private String password;
 
     @Schema(description = "보안 타입", example = "WPA") // WPA, WEP, NOPASS
+    @Setter
     @NotNull
     private String authType;
 

@@ -47,12 +47,13 @@ public class QrCodeServiceImpl implements QrCodeService {
 
         AddNetworkRes networkRes = networkMapper.getNetworkById(req);
 
-        //1. 암호화 pass, 복호화 pass 둘 다 변수에 저장
+        //1. 비밀번호 여부 체크 및 암복호화 저장
         String encryptedPw = networkRes.getPassword(); //암호화 password
-        String decryptedPw = wifiPasswordEncryptor.decrypt(networkRes.getPassword()); //복호화 password
+        boolean hasPassword = encryptedPw != null && !encryptedPw.isBlank();
+        String decryptedPw = hasPassword ? wifiPasswordEncryptor.decrypt(encryptedPw) : null; //복호화 password
 
         String ssid = networkRes.getSsid();
-        String authType = networkRes.getAuthType();
+        String authType = hasPassword ? networkRes.getAuthType() : "nopass";
         String hiddenYn = networkRes.getHiddenYn();
 
         //3. qr생성 및 db용 qrContents 생성
@@ -109,12 +110,13 @@ public class QrCodeServiceImpl implements QrCodeService {
     @Transactional
     public CreateQrCodeRes createAnonymousQrCode(CreateAnonymousQrReq req) {
 
-        //1. 평문 pass, 암호화 pass 둘 다 변수에 저장
+        //1. 비밀번호 여부 체크 및 암복화 저장
         String plainPw = req.getPassword(); //평문 password
-        String encryptedPw = wifiPasswordEncryptor.encrypt(req.getPassword()); //암호화 password
+        boolean hasPassword = plainPw != null && !plainPw.isBlank();
+        String encryptedPw = hasPassword ? wifiPasswordEncryptor.encrypt(plainPw) : null; //암호화 password
 
         String ssid = req.getSsid();
-        String authType = req.getAuthType();
+        String authType = hasPassword ? req.getAuthType() : "nopass";
         String hiddenYn = req.getHiddenYn();
 
         //2. 네트워크 저장 (게스트 플래그 Y)
