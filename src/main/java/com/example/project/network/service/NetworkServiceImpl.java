@@ -12,13 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class NetworkServiceImpl implements NetworkService {
 
     private final NetworkMapper networkMapper;
     private final WifiPasswordEncryptor wifiPasswordEncryptor;
 
     @Override
+    @Transactional
     public AddNetworkRes addNetwork(AddNetworkReq req,  Long userSeq) {
 
         //1. 비밀번호 암호화
