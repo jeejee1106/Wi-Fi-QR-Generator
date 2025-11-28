@@ -14,6 +14,7 @@ import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.mapper.QrCodeMapper;
+import com.example.project.qrcode.service.dto.QrContentBundle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,33 +54,14 @@ public class QrCodeServiceImpl implements QrCodeService {
         String authType = networkRes.getAuthType();
         String hiddenYn = networkRes.getHiddenYn();
 
-        //2. QR 내용 문자열 생성
-        String plainQrContent = WifiQrContentBuilder.build(
-                ssid,
-                decryptedPw,
-                authType,
-                hiddenYn
-        );
+        //3. qr생성 및 db용 qrContents 생성
+        QrContentBundle qrContentBundle = generateQrCodeAndQrContents(ssid, decryptedPw, encryptedPw, authType, hiddenYn);
 
-        //3. QR PNG 생성
-        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-        String fileName = "wifi_" + ssid + "_" + now;
-        String imagePath = QrImageGenerator.generatePng(plainQrContent, qrImageOutputDir, fileName);
-
-
-        //4. DB 저장용 QR 콘텐츠 (다시 암호화된 비밀번호로)
-        String dbQrContent = WifiQrContentBuilder.build(
-                ssid,
-                encryptedPw,
-                authType,
-                hiddenYn
-        );
-
-        //5. DB 저장
+        //4. DB 저장
         CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
                 req.getNetworkSeq(),
-                dbQrContent,// DB에는 암호문 버전 저장
-                imagePath,
+                qrContentBundle.getQrContent(),// DB에는 암호문 버전 저장
+                qrContentBundle.getImagePath(),
                 req.getExpiresAt(),
                 "N"
         );
@@ -181,7 +163,28 @@ public class QrCodeServiceImpl implements QrCodeService {
                 "Y");
         networkMapper.addNetwork(network);
 
-        //3. QR 내용 문자열 생성
+        //3. qr생성 및 db용 qrContents 생성
+        QrContentBundle qrContentBundle = generateQrCodeAndQrContents(ssid, plainPw, encryptedPw, authType, hiddenYn);
+
+        //4. DB 저장
+        CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
+                network.getNetworkSeq(),
+                qrContentBundle.getQrContent(),// DB에는 암호문 버전 저장
+                qrContentBundle.getImagePath(),
+                req.getExpiresAt(),
+                "Y"
+        );
+        qrCodeMapper.createQrCode(createQrCodeRes);
+
+        return createQrCodeRes;
+    }
+
+    public QrContentBundle generateQrCodeAndQrContents(String ssid,
+                                String plainPw,
+                                String encryptedPw,
+                                String authType,
+                                String hiddenYn) {
+        //1. QR 내용 문자열 생성
         String plainQrContent = WifiQrContentBuilder.build(
                 ssid,
                 plainPw, //평문 비밀번호
@@ -189,12 +192,12 @@ public class QrCodeServiceImpl implements QrCodeService {
                 hiddenYn
         );
 
-        //4. QR PNG 생성
+        //2. QR PNG 생성
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
         String fileName = "wifi_" + ssid + "_" + now;
         String imagePath = QrImageGenerator.generatePng(plainQrContent, qrImageOutputDir, fileName);
 
-        //5. DB 저장용 QR 콘텐츠 (다시 암호화된 비밀번호로)
+        //3. DB 저장용 QR 콘텐츠 (다시 암호화된 비밀번호로)
         String dbQrContent = WifiQrContentBuilder.build(
                 ssid,
                 encryptedPw,
@@ -202,17 +205,7 @@ public class QrCodeServiceImpl implements QrCodeService {
                 hiddenYn
         );
 
-        //6. DB 저장
-        CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
-                network.getNetworkSeq(),
-                dbQrContent,// DB에는 암호문 버전 저장
-                imagePath,
-                req.getExpiresAt(),
-                "Y"
-        );
-        qrCodeMapper.createQrCode(createQrCodeRes);
-
-        return createQrCodeRes;
+        return new QrContentBundle(dbQrContent, imagePath);
     }
 
 
