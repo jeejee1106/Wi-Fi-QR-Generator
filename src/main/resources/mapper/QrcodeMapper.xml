@@ -52,11 +52,13 @@
             qr_code_seq = #{qrCodeSeq}
     </select>
 
-    <!-- QrCodeMapper.deactivate -->
-    <update id="deactivate" parameterType="long">
+    <!-- QrCodeMapper.deactivateQrCode -->
+    <update id="deactivateQrCode" parameterType="com.example.project.qrcode.domain.QrCode">
         UPDATE wifi_qr_code
         SET
             active_yn = 'N',
+            deactivated_reason = #{deactivatedReason},
+            deactivated_at = NOW(),
             update_at = NOW()
         WHERE qr_code_seq = #{qrCodeSeq}
     </update>

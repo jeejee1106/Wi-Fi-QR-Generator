@@ -5,6 +5,7 @@ import com.example.project.common.exception.ErrorCode;
 import com.example.project.common.security.CustomUserDetails;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
+import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.service.QrCodeService;
@@ -65,12 +66,16 @@ public class QrCodeController {
     }
 
     //추후 서비스 더 커지면 QrManageController 등으로 뺄 수 있음
-    @PatchMapping("/deactivate/{qrCodeSeq}")
-    public void deactivate(@PathVariable Long qrCodeSeq, @AuthenticationPrincipal CustomUserDetails user) {
+    @PatchMapping("/{qrCodeSeq}/deactivate")
+    public void deactivateQrCode(@PathVariable Long qrCodeSeq,
+                                 @RequestBody DeactivateQrCodeReq req,
+                                 @AuthenticationPrincipal CustomUserDetails user
+    ) {
         if (user == null) {
             throw new BusinessException(ErrorCode.AUTH_UNAUTHORIZED);
         }
+
         Long userSeq = user.getUserSeq();
-        qrCodeService.deactivateQr(qrCodeSeq, userSeq);
+        qrCodeService.deactivateQrCode(qrCodeSeq, req, userSeq);
     }
 }

@@ -11,6 +11,7 @@ import com.example.project.network.mapper.NetworkMapper;
 import com.example.project.qrcode.domain.QrCode;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
+import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.mapper.QrCodeMapper;
@@ -189,13 +190,14 @@ public class QrCodeServiceImpl implements QrCodeService {
 
     @Override
     @Transactional
-    public void deactivateQr(Long qrCodeSeq, Long userSeq) {
+    public void deactivateQrCode(Long qrCodeSeq, DeactivateQrCodeReq req, Long userSeq) {
 
         //1. QR 코드 조회
         QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
         if (qrCode == null) {
             throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
         }
+        qrCode.setDeactivatedReason(req.getDeactivatedReason());
 
         //2. QR에서 networkSeq 가져옴
         Long networkSeq = qrCode.getNetworkSeq();
@@ -215,7 +217,7 @@ public class QrCodeServiceImpl implements QrCodeService {
         }
 
         //5. active_yn UPDATE (비활성화)
-        qrCodeMapper.deactivate(qrCodeSeq);
+        qrCodeMapper.deactivateQrCode(qrCode);
     }
 
     private QrContentBundle generateQrCodeAndQrContents(String ssid,
