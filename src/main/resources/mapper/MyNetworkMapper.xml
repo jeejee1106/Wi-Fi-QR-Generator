@@ -5,7 +5,7 @@
 
     <!-- 내 네트워크 목록 조회 -->
     <select id="getMyNetworkList" resultType="com.example.project.mypage.dto.response.MyNetworkRes">
-        <!--* MyNetworkMapper.getMyNetworkList *-->
+        /** MyNetworkMapper.getMyNetworkList **/
         SELECT
               network_seq
             , ssid
@@ -27,4 +27,23 @@
         ORDER BY created_at DESC
     </select>
 
+    <!-- 내 네트워크 단건 조회 -->
+    <select id="getMyNetwork" resultType="com.example.project.mypage.dto.response.MyNetworkDetailRes">
+        /** MyNetworkMapper.getMyNetwork **/
+        SELECT
+              network_seq
+            , ssid
+            , auth_type
+            , hidden_yn
+            , memo
+            , active_yn
+            , guest_yn
+            , created_at
+            , updated_at
+        FROM
+            wifi_network
+        WHERE 1=1
+            AND network_seq = #{networkSeq}
+            AND user_seq = #{userSeq}   <!-- 소유자 검증까지 한 번에 -->
+    </select>
 </mapper>

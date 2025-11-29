@@ -2,15 +2,14 @@ package com.example.project.mypage.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 @Schema(description = "내 네트워크 단일 조회 응답")
-public class MyNetworkRes {
+public class MyNetworkDetailRes {
 
     @Schema(description = "네트워크 PK", example = "3")
     private Long networkSeq;
@@ -24,8 +23,14 @@ public class MyNetworkRes {
     @Schema(description = "숨김 여부 (Y/N)", example = "N")
     private String hiddenYn;
 
+    @Schema(description = "메모")
+    private String memo;
+
     @Schema(description = "활성 여부 (Y/N)", example = "Y")
     private String activeYn;
+
+    @Schema(description = "게스트 여부 (Y/N)", example = "Y")
+    private String guestYn;
 
     @Schema(description = "생성 일시")
     private LocalDateTime createdAt;
