@@ -27,6 +27,9 @@ public class CreateAnonymousQrReq {
     @Schema(description = "숨김여부", example = "N")
     private String hiddenYn;
 
+    @Schema(description = "사용자 지정 네트워크 별칭")
+    private String alias;
+
     @Schema(description = "메모")
     private String memo;
 

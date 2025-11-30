@@ -4,13 +4,14 @@
 <mapper namespace="com.example.project.network.mapper.NetworkMapper">
 
     <insert id="addNetwork" useGeneratedKeys="true" keyProperty="networkSeq" parameterType="com.example.project.network.dto.request.AddNetworkReq">
-
+        /** NetworkMapper.addNetwork **/
         INSERT INTO wifi_network (
             user_seq,
             ssid,
             password,
             auth_type,
             hidden_yn,
+            alias,
             memo,
             active_yn,
             guest_yn
@@ -21,6 +22,7 @@
             #{password},
             #{authType},
             #{hiddenYn},
+            #{alias},
             #{memo},
             #{activeYn},
             #{guestYn}

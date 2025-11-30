@@ -32,6 +32,9 @@ public class AddNetworkReq {
     @Schema(description = "숨김여부", example = "N")
     private String hiddenYn;
 
+    @Schema(description = "사용자 지정 네트워크 별칭")
+    private String alias;
+
     @Schema(description = "메모")
     private String memo;
 
@@ -51,6 +54,7 @@ public class AddNetworkReq {
                                    String password,
                                    String authType,
                                    String hiddenYn,
+                                   String alias,
                                    String memo,
                                    String activeYn,
                                    String guestYn) {
@@ -60,9 +64,10 @@ public class AddNetworkReq {
         res.password = password;
         res.authType = authType;
         res.hiddenYn = hiddenYn;
+        res.alias    = alias;
         res.memo     = memo;
         res.activeYn = activeYn;
-        res.guestYn = guestYn;
+        res.guestYn  = guestYn;
         return res;
     }
 

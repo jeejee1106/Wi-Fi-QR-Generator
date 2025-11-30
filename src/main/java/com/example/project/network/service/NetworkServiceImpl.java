@@ -41,7 +41,6 @@ public class NetworkServiceImpl implements NetworkService {
         //3. 와이파이 정보 저장
         networkMapper.addNetwork(req);
 
-
         return AddNetworkRes.of(req);
     }
 }

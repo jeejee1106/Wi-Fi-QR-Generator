@@ -127,6 +127,7 @@ public class QrCodeServiceImpl implements QrCodeService {
                 encryptedPw,
                 authType,
                 hiddenYn,
+                req.getAlias(),
                 req.getMemo(),
                 req.getActiveYn(),
                 "Y");

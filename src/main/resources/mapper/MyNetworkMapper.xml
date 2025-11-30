@@ -5,15 +5,13 @@
 
     <!-- 내 네트워크 목록 조회 -->
     <select id="getMyNetworkList" resultType="com.example.project.mypage.dto.response.MyNetworkRes">
-        /** MyNetworkMapper.getMyNetworkList **/
+        /* MyNetworkMapper.getMyNetworkList */
         SELECT
               network_seq
             , ssid
-            , auth_type
-            , hidden_yn
+            , alias
             , active_yn
             , created_at
-            , updated_at
         FROM
             wifi_network
         WHERE
@@ -29,12 +27,13 @@
 
     <!-- 내 네트워크 단건 조회 -->
     <select id="getMyNetwork" resultType="com.example.project.mypage.dto.response.MyNetworkDetailRes">
-        /** MyNetworkMapper.getMyNetwork **/
+        /* MyNetworkMapper.getMyNetwork */
         SELECT
               network_seq
             , ssid
             , auth_type
             , hidden_yn
+            , alias
             , memo
             , active_yn
             , guest_yn

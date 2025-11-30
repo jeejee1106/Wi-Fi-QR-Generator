@@ -23,6 +23,9 @@ public class MyNetworkDetailRes {
     @Schema(description = "숨김 여부 (Y/N)", example = "N")
     private String hiddenYn;
 
+    @Schema(description = "사용자 지정 네트워크 별칭")
+    private String alias;
+
     @Schema(description = "메모")
     private String memo;
 
