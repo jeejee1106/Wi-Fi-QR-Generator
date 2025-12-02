@@ -2,6 +2,7 @@ package com.example.project.mypage.controller;
 
 import com.example.project.common.security.CustomUserDetails;
 import com.example.project.mypage.dto.request.MyNetworkSearchCond;
+import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
 import com.example.project.mypage.dto.response.MyNetworkDetailRes;
 import com.example.project.mypage.dto.response.MyNetworkListRes;
 import com.example.project.mypage.dto.response.MyNetworkRes;
@@ -40,6 +41,18 @@ public class MyPageController {
     ) {
         Long userSeq = user.getUserSeq();
         return myNetworkService.getMyNetwork(networkSeq, userSeq);
+    }
+
+    /**
+     * 내 네트워크 수정
+     */
+    @PatchMapping("/networks/{networkSeq}")
+    public void updateMyNetwork(@PathVariable Long networkSeq,
+                                @RequestBody @Valid UpdateMyNetworkReq req,
+                                @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        Long userSeq = user.getUserSeq();
+        myNetworkService.updateMyNetwork(networkSeq, req, userSeq);
     }
 
 }

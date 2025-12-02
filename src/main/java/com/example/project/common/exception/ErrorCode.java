@@ -14,6 +14,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C003", "서버 내부 오류가 발생했습니다."),
     INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "C004", "요청 JSON 형식이 잘못되었습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C005", "잘못된 요청입니다."),
+    FAILED_UPDATE(HttpStatus.NOT_FOUND, "C006", "수정된 데이터가 없습니다."),
+    FAILED_DELETE(HttpStatus.NOT_FOUND, "C007", "삭제된 데이터가 없습니다."),
+    FAILED_INSERT(HttpStatus.NOT_FOUND, "C008", "저장된 데이터가 없습니다."),
 
     /* ============================
      * 2. AUTH (인증/인가 에러)

@@ -4,7 +4,7 @@
 <mapper namespace="com.example.project.qrcode.mapper.QrCodeMapper">
 
     <insert id="createQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq" parameterType="com.example.project.qrcode.dto.response.CreateQrCodeRes">
-
+        /* QrCodeMapper.createQrCode */
         INSERT INTO wifi_qr_code (
             network_seq,
             qr_content,
@@ -37,7 +37,8 @@
             qr_code_seq = #{qrCodeSeq}
     </update>
 
-    <select id="findByQrCodeSeq" resultType="com.example.project.qrcode.domain.QrCode">
+    <select id="findQrCode" resultType="com.example.project.qrcode.domain.QrCode">
+        /* QrCodeMapper.findQrCode */
         SELECT
             qr_code_seq,
             network_seq,
@@ -48,19 +49,30 @@
             created_at
         FROM
             wifi_qr_code
-        WHERE
-            qr_code_seq = #{qrCodeSeq}
+        WHERE 1=1
+            <if test="qrCodeSeq != null and qrCodeSeq != ''">
+                AND qr_code_seq = #{qrCodeSeq}
+            </if>
+            <if test="networkSeq != null and networkSeq != ''">
+                AND network_seq = #{networkSeq}
+            </if>
     </select>
 
-    <!-- QrCodeMapper.deactivateQrCode -->
     <update id="deactivateQrCode" parameterType="com.example.project.qrcode.domain.QrCode">
+        /* QrCodeMapper.deactivateQrCode */
         UPDATE wifi_qr_code
         SET
             active_yn = 'N',
             deactivated_reason = #{deactivatedReason},
             deactivated_at = NOW(),
             update_at = NOW()
-        WHERE qr_code_seq = #{qrCodeSeq}
+        WHERE 1=1
+            <if test="qrCodeSeq != null and qrCodeSeq != ''">
+                AND qr_code_seq = #{qrCodeSeq}
+            </if>
+            <if test="networkSeq != null and networkSeq != ''">
+                AND network_seq = #{networkSeq}
+            </if>
     </update>
 
 </mapper>

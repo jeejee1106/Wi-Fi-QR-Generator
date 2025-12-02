@@ -45,4 +45,37 @@
             AND network_seq = #{networkSeq}
             AND user_seq = #{userSeq}   <!-- 소유자 검증까지 한 번에 -->
     </select>
+
+    <!-- 내 네트워크 수정 -->
+    <update id="updateMyNetwork">
+        /* MyNetworkMapper.updateMyNetwork */
+        UPDATE
+            wifi_network
+        <set>
+            <if test="req.ssid != null and req.ssid != ''">
+            , ssid = #{req.ssid}
+            </if>
+            <if test="req.password != null and req.password != ''">
+            , password = #{req.password}
+            </if>
+            <if test="req.authType != null and req.authType != ''">
+            , auth_type = #{req.authType}
+            </if>
+            <if test="req.hiddenYn != null and req.hiddenYn != ''">
+            , hidden_yn = #{req.hiddenYn}
+            </if>
+            <if test="req.alias != null and req.alias != ''">
+            , alias = #{req.alias}
+            </if>
+            <if test="req.memo != null and req.memo != ''">
+            , memo = #{req.memo}
+            </if>
+            <if test="req.activeYn != null and req.activeYn != ''">
+            , active_yn = #{req.activeYn}
+            </if>
+        </set>
+        WHERE 1=1
+            AND network_seq = #{networkSeq}
+            AND user_seq = #{userSeq}   <!-- 소유자 검증까지 한 번에 -->
+    </update>
 </mapper>

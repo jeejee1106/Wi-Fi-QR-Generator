@@ -12,6 +12,7 @@ import com.example.project.qrcode.domain.QrCode;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
 import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
+import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.mapper.QrCodeMapper;
@@ -152,8 +153,11 @@ public class QrCodeServiceImpl implements QrCodeService {
     @Override
     public WifiConnectRes scanWifiQr(Long qrCodeSeq) {
 
+        QrCodeSearchCond  qrCodeSearchCond = new QrCodeSearchCond();
+        qrCodeSearchCond.setQrCodeSeq(qrCodeSeq);
+
         //1. QR 코드 조회
-        QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
+        QrCode qrCode = qrCodeMapper.findQrCode(qrCodeSearchCond);
         if (qrCode == null) {
             throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
         }
@@ -193,8 +197,12 @@ public class QrCodeServiceImpl implements QrCodeService {
     @Transactional
     public void deactivateQrCode(Long qrCodeSeq, DeactivateQrCodeReq req, Long userSeq) {
 
+        QrCodeSearchCond qrCodeSearchCond = new QrCodeSearchCond();
+        qrCodeSearchCond.setQrCodeSeq(qrCodeSeq);
+
         //1. QR 코드 조회
-        QrCode qrCode = qrCodeMapper.findByQrCodeSeq(qrCodeSeq);
+        //TODO : QrCode domain 말고 dto로 가져올 수 있나 확인 후 수정하기
+        QrCode qrCode = qrCodeMapper.findQrCode(qrCodeSearchCond);
         if (qrCode == null) {
             throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
         }
