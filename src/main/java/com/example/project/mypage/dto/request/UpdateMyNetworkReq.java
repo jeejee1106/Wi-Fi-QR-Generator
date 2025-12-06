@@ -28,7 +28,7 @@ public class UpdateMyNetworkReq {
     @Schema(description = "메모")
     String memo;
 
-    @Schema(description = "활성 여부")
+    @Schema(description = "활성 여부", example = "Y")
     String activeYn;
 
 }
