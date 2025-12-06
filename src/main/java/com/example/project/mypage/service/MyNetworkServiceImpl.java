@@ -5,9 +5,7 @@ import com.example.project.common.exception.ErrorCode;
 import com.example.project.common.security.crypto.WifiPasswordEncryptor;
 import com.example.project.mypage.dto.request.MyNetworkSearchCond;
 import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
-import com.example.project.mypage.dto.response.MyNetworkDetailRes;
-import com.example.project.mypage.dto.response.MyNetworkListRes;
-import com.example.project.mypage.dto.response.MyNetworkRes;
+import com.example.project.mypage.dto.response.*;
 import com.example.project.mypage.mapper.MyNetworkMapper;
 import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
@@ -126,5 +124,21 @@ public class MyNetworkServiceImpl implements MyNetworkService {
         }
 
     }
+
+    @Override
+    public MyQrCodeListRes getMyQrCodeListByNetwork(Long networkSeq, QrCodeSearchCond cond, Long userSeq) {
+
+        if (userSeq == null) {
+            throw new BusinessException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        List<MyQrCodeRes> resultList = myNetworkMapper.getMyQrCodeListByNetwork(networkSeq, cond, userSeq);
+        return MyQrCodeListRes.builder()
+                .totalCount(resultList.size())
+                .list(resultList)
+                .build();
+
+    }
+
 
 }

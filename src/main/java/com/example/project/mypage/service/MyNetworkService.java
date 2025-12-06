@@ -4,6 +4,8 @@ import com.example.project.mypage.dto.request.MyNetworkSearchCond;
 import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
 import com.example.project.mypage.dto.response.MyNetworkDetailRes;
 import com.example.project.mypage.dto.response.MyNetworkListRes;
+import com.example.project.mypage.dto.response.MyQrCodeListRes;
+import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 
 public interface MyNetworkService {
 
@@ -11,5 +13,6 @@ public interface MyNetworkService {
     MyNetworkDetailRes getMyNetwork(Long networkSeq, Long userSeq);
     void updateMyNetwork(Long networkSeq, UpdateMyNetworkReq req,  Long userSeq);
     void deleteMyNetwork(Long networkSeq, Long userSeq);
+    MyQrCodeListRes getMyQrCodeListByNetwork(Long networkSeq, QrCodeSearchCond cond, Long userSeq);
 
 }

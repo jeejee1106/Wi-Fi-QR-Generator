@@ -9,5 +9,6 @@ public class QrCodeSearchCond {
 
     private Long qrCodeSeq;
     private Long networkSeq;
+    private String activeYn;
 
 }
