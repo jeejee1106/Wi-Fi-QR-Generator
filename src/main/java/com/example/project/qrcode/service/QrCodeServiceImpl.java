@@ -142,7 +142,7 @@ public class QrCodeServiceImpl implements QrCodeService {
                 network.getNetworkSeq(),
                 qrContentBundle.getQrContent(),// DB에는 암호문 버전 저장
                 qrContentBundle.getImagePath(),
-                req.getExpiresAt(),
+                null,
                 "Y"
         );
         qrCodeMapper.createQrCode(createQrCodeRes);
