@@ -55,6 +55,17 @@ public class MyPageController {
         myNetworkService.updateMyNetwork(networkSeq, req, userSeq);
     }
 
+    /**
+     * 내 네트워크 삭제
+     */
+    @DeleteMapping("/networks/{networkSeq}")
+    public void deleteMyNetwork(@PathVariable Long networkSeq,
+                                @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        Long userSeq = user.getUserSeq();
+        myNetworkService.deleteMyNetwork(networkSeq, userSeq);
+    }
+
 }
 
 

@@ -15,4 +15,6 @@ public interface MyNetworkMapper {
     List<MyNetworkRes> getMyNetworkList(@Param("cond") MyNetworkSearchCond cond, @Param("userSeq") Long userSeq);
     MyNetworkDetailRes getMyNetwork(@Param("networkSeq") Long networkSeq, @Param("userSeq") Long userSeq);
     int updateMyNetwork(@Param("networkSeq") Long networkSeq, @Param("req") UpdateMyNetworkReq req, @Param("userSeq") Long userSeq);
+    int deleteMyNetwork(@Param("networkSeq") Long networkSeq, @Param("userSeq") Long userSeq);
+
 }

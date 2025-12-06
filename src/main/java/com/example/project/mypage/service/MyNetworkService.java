@@ -10,5 +10,6 @@ public interface MyNetworkService {
     MyNetworkListRes getMyNetworkList(MyNetworkSearchCond cond, Long userSeq);
     MyNetworkDetailRes getMyNetwork(Long networkSeq, Long userSeq);
     void updateMyNetwork(Long networkSeq, UpdateMyNetworkReq req,  Long userSeq);
+    void deleteMyNetwork(Long networkSeq, Long userSeq);
 
 }

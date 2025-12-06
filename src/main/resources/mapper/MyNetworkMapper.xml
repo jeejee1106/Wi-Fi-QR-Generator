@@ -78,4 +78,17 @@
             AND network_seq = #{networkSeq}
             AND user_seq = #{userSeq}   <!-- 소유자 검증까지 한 번에 -->
     </update>
+
+    <!-- 내 네트워크 삭제 -->
+    <update id="deleteMyNetwork">
+        /* MyNetworkMapper.deleteMyNetwork */
+        UPDATE
+        wifi_network
+        <set>
+            , active_yn = 'N'
+        </set>
+        WHERE 1=1
+        AND network_seq = #{networkSeq}
+        AND user_seq = #{userSeq}   <!-- 소유자 검증까지 한 번에 -->
+    </update>
 </mapper>

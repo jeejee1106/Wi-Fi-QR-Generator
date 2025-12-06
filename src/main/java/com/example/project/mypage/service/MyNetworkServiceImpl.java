@@ -104,4 +104,27 @@ public class MyNetworkServiceImpl implements MyNetworkService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteMyNetwork(Long networkSeq, Long userSeq) {
+
+        if (userSeq == null) {
+            throw new BusinessException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        //1. 해당 네트워크에 등록된 QR 전부 비활성화
+        DeactivateQrCodeReq deactivateQrCodeReq = new DeactivateQrCodeReq();
+        deactivateQrCodeReq.setNetworkSeq(networkSeq);
+        deactivateQrCodeReq.setDeactivatedReason("Auto deactivated: The associated network has been deleted.");
+        qrCodeMapper.deactivateQrCode(deactivateQrCodeReq);
+
+        //2. 네트워크 정보 삭제 (update쿼리)
+        int updated = myNetworkMapper.deleteMyNetwork(networkSeq, userSeq);
+
+        if (updated == 0) {
+            throw new BusinessException(ErrorCode.FAILED_UPDATE);
+        }
+
+    }
+
 }
