@@ -96,20 +96,21 @@
     <select id="getMyQrCodeListByNetwork" resultType="com.example.project.mypage.dto.response.MyQrCodeRes">
         /* MyNetworkMapper.getMyQrCodeListByNetwork */
         SELECT
-              qr_code_seq
-            , network_seq
-            , qr_content
-            , expires_at
-            , active_yn
-            , deactivated_at
+              qr.qr_code_seq
+            , qr.network_seq
+            , qr.qr_content
+            , qr.expires_at
+            , qr.active_yn
+            , qr.deactivated_at
         FROM
-            wifi_qr_code
+            wifi_qr_code qr
+        JOIN
+            wifi_network n ON qr.network_seq = n.network_seq AND n.user_seq = #{userSeq}
         WHERE
-            network_seq = #{networkSeq}
-        <if test="cond.activeYn != null and cond.activeYn != ''">
-            AND active_yn = #{cond.activeYn}
-        </if>
-
-        ORDER BY created_at DESC
+            qr.network_seq = #{networkSeq}
+            <if test="cond.activeYn != null and cond.activeYn != ''">
+                AND qr.active_yn = #{cond.activeYn}
+            </if>
+        ORDER BY qr.created_at DESC
     </select>
 </mapper>
