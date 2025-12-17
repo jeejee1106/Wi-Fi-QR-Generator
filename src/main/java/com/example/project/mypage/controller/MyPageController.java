@@ -8,6 +8,7 @@ import com.example.project.mypage.dto.response.MyNetworkListRes;
 import com.example.project.mypage.dto.response.MyQrCodeListRes;
 import com.example.project.mypage.service.MyNetworkService;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "MY PAGE API", description = "마이페이지 관리 API")
 @RequestMapping("/my")
 public class MyPageController {
 

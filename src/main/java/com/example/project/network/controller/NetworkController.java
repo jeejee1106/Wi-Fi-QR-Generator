@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "NETWORK API", description = "유저 관리 API")
+@Tag(name = "NETWORK API", description = "네트워크 관리 API")
 @RequestMapping("/network")
 public class NetworkController {
 

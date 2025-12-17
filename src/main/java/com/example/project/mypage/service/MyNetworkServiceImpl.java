@@ -82,9 +82,6 @@ public class MyNetworkServiceImpl implements MyNetworkService {
         boolean needDeactivateQrs = ssidChanged || passwordChanged;
 
         // 3. SSID 또는 비밀번호가 변경되면 -> 기존 QR 전부 비활성화
-        QrCodeSearchCond qrCodeSearchCond = new QrCodeSearchCond();
-        qrCodeSearchCond.setNetworkSeq(networkSeq);
-
         DeactivateQrCodeReq deactivateQrCodeReq = new DeactivateQrCodeReq();
         deactivateQrCodeReq.setNetworkSeq(networkSeq);
         deactivateQrCodeReq.setDeactivatedReason("Auto deactivated: Network SSID/Password changed");
