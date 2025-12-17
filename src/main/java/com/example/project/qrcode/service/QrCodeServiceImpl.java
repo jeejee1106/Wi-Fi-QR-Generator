@@ -11,7 +11,6 @@ import com.example.project.network.mapper.NetworkMapper;
 import com.example.project.qrcode.domain.QrCode;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
-import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
@@ -191,42 +190,6 @@ public class QrCodeServiceImpl implements QrCodeService {
                 .authType(networkRes.getAuthType())
                 .hiddenYn(networkRes.getHiddenYn())
                 .build();
-    }
-
-    @Override
-    @Transactional
-    public void deactivateQrCode(Long qrCodeSeq, DeactivateQrCodeReq req, Long userSeq) {
-
-        QrCodeSearchCond qrCodeSearchCond = new QrCodeSearchCond();
-        qrCodeSearchCond.setQrCodeSeq(qrCodeSeq);
-
-        //1. QR 코드 조회
-        //TODO : QrCode domain 말고 dto로 가져올 수 있나 확인 후 수정하기
-        QrCode qrCode = qrCodeMapper.findQrCode(qrCodeSearchCond);
-        if (qrCode == null) {
-            throw new BusinessException(ErrorCode.QR_NOT_FOUND); //404
-        }
-        qrCode.setDeactivatedReason(req.getDeactivatedReason());
-
-        //2. QR에서 networkSeq 가져옴
-        Long networkSeq = qrCode.getNetworkSeq();
-        if (networkSeq == null) {
-            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
-        }
-
-        //3. 네트워크 정보 조회
-        AddNetworkRes network = networkMapper.getNetworkById(networkSeq);
-        if (network == null) {
-            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
-        }
-
-        //4. 권한 체크: 네트워크 소유자와 현재 로그인한 user 비교
-        if (!network.getUserSeq().equals(userSeq)) {
-            throw new BusinessException(ErrorCode.AUTH_FORBIDDEN); //403
-        }
-
-        //5. active_yn UPDATE (비활성화)
-        qrCodeMapper.deactivateQrCode(qrCode);
     }
 
     private QrContentBundle generateQrCodeAndQrContents(String ssid,

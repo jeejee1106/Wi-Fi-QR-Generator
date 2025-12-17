@@ -7,7 +7,7 @@ import com.example.project.mypage.dto.request.MyNetworkSearchCond;
 import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
 import com.example.project.mypage.dto.response.*;
 import com.example.project.mypage.mapper.MyNetworkMapper;
-import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
+import com.example.project.mypage.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import com.example.project.qrcode.mapper.QrCodeMapper;
 import lombok.RequiredArgsConstructor;
@@ -88,7 +88,7 @@ public class MyNetworkServiceImpl implements MyNetworkService {
 
         //기존 QR 전부 비활성화
         if (needDeactivateQrs) {
-            qrCodeMapper.deactivateQrCode(deactivateQrCodeReq);
+            myNetworkMapper.deactivateQrCode(null, deactivateQrCodeReq, userSeq);
         }
 
         // 4. 네트워크 정보 업데이트
@@ -111,7 +111,7 @@ public class MyNetworkServiceImpl implements MyNetworkService {
         DeactivateQrCodeReq deactivateQrCodeReq = new DeactivateQrCodeReq();
         deactivateQrCodeReq.setNetworkSeq(networkSeq);
         deactivateQrCodeReq.setDeactivatedReason("Auto deactivated: The associated network has been deleted.");
-        qrCodeMapper.deactivateQrCode(deactivateQrCodeReq);
+        myNetworkMapper.deactivateQrCode(null, deactivateQrCodeReq, userSeq);
 
         //2. 네트워크 정보 삭제 (update쿼리)
         int updated = myNetworkMapper.deleteMyNetwork(networkSeq, userSeq);
@@ -135,6 +135,18 @@ public class MyNetworkServiceImpl implements MyNetworkService {
                 .list(resultList)
                 .build();
 
+    }
+
+    @Override
+    @Transactional
+    public void deactivateQrCode(Long qrCodeSeq, DeactivateQrCodeReq req, Long userSeq) {
+
+        int updated = myNetworkMapper.deactivateQrCode(qrCodeSeq, req, userSeq);
+
+        if (updated == 0) {
+            // 존재하지 않거나, 권한 없거나
+            throw new BusinessException(ErrorCode.QR_NOT_FOUND);
+        }
     }
 
 

@@ -1,11 +1,7 @@
 package com.example.project.qrcode.controller;
 
-import com.example.project.common.exception.BusinessException;
-import com.example.project.common.exception.ErrorCode;
-import com.example.project.common.security.CustomUserDetails;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
 import com.example.project.qrcode.dto.request.CreateQrCodeReq;
-import com.example.project.qrcode.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.service.QrCodeService;
@@ -14,11 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,17 +59,4 @@ public class QrCodeController {
                 .body(res);
     }
 
-    //추후 서비스 더 커지면 QrManageController 등으로 뺄 수 있음
-    @PatchMapping("/{qrCodeSeq}/deactivate")
-    public void deactivateQrCode(@PathVariable Long qrCodeSeq,
-                                 @RequestBody DeactivateQrCodeReq req,
-                                 @AuthenticationPrincipal CustomUserDetails user
-    ) {
-        if (user == null) {
-            throw new BusinessException(ErrorCode.AUTH_UNAUTHORIZED);
-        }
-
-        Long userSeq = user.getUserSeq();
-        qrCodeService.deactivateQrCode(qrCodeSeq, req, userSeq);
-    }
 }

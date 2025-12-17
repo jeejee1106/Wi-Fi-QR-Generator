@@ -1,5 +1,7 @@
 package com.example.project.mypage.controller;
 
+import com.example.project.common.exception.BusinessException;
+import com.example.project.common.exception.ErrorCode;
 import com.example.project.common.security.CustomUserDetails;
 import com.example.project.mypage.dto.request.MyNetworkSearchCond;
 import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
@@ -7,6 +9,7 @@ import com.example.project.mypage.dto.response.MyNetworkDetailRes;
 import com.example.project.mypage.dto.response.MyNetworkListRes;
 import com.example.project.mypage.dto.response.MyQrCodeListRes;
 import com.example.project.mypage.service.MyNetworkService;
+import com.example.project.mypage.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -77,6 +80,22 @@ public class MyPageController {
     ) {
         Long userSeq = user.getUserSeq();
         return myNetworkService.getMyQrCodeListByNetwork(networkSeq, cond, userSeq);
+    }
+
+    /**
+     * 내 QRCODE 비활성화
+     */
+    @PatchMapping("/qr/{qrCodeSeq}/deactivate")
+    public void deactivateQrCode(@PathVariable Long qrCodeSeq,
+                                 @RequestBody DeactivateQrCodeReq req,
+                                 @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        if (user == null) {
+            throw new BusinessException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        Long userSeq = user.getUserSeq();
+        myNetworkService.deactivateQrCode(qrCodeSeq, req, userSeq);
     }
 
 }

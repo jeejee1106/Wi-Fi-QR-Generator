@@ -113,4 +113,26 @@
             </if>
         ORDER BY qr.created_at DESC
     </select>
+
+    <update id="deactivateQrCode">
+        /* MyNetworkMapper.deactivateQrCode */
+        UPDATE wifi_qr_code qr
+        JOIN wifi_network n ON qr.network_seq = n.network_seq
+        SET
+        qr.active_yn = 'N',
+        qr.deactivated_reason = #{req.deactivatedReason},
+        qr.deactivated_at = NOW()
+        WHERE 1=1
+        <if test="qrCodeSeq != null and qrCodeSeq != ''">
+            AND qr.qr_code_seq = #{qrCodeSeq}
+        </if>
+        <if test="req.networkSeq != null and req.networkSeq != ''">
+            AND qr.network_seq = #{req.networkSeq}
+        </if>
+        <if test="userSeq != null and userSeq != ''">
+            AND n.user_seq = #{userSeq}
+        </if>
+        AND qr.active_yn = 'Y' <!--멱등성 고려-->
+        AND qr.deactivated_at IS NULL <!--멱등성 고려-->
+    </update>
 </mapper>

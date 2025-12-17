@@ -1,4 +1,4 @@
-package com.example.project.qrcode.dto.request;
+package com.example.project.mypage.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 @Schema(description = "QR 코드 비활성화")
 public class DeactivateQrCodeReq {
-
-    private Long qrCodeSeq;
 
     private Long networkSeq;
 

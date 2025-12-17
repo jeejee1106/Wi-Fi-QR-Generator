@@ -1,5 +1,6 @@
 package com.example.project.mypage.mapper;
 
+import com.example.project.mypage.dto.request.DeactivateQrCodeReq;
 import com.example.project.mypage.dto.request.MyNetworkSearchCond;
 import com.example.project.mypage.dto.request.UpdateMyNetworkReq;
 import com.example.project.mypage.dto.response.MyNetworkDetailRes;
@@ -19,5 +20,6 @@ public interface MyNetworkMapper {
     int updateMyNetwork(@Param("networkSeq") Long networkSeq, @Param("req") UpdateMyNetworkReq req, @Param("userSeq") Long userSeq);
     int deleteMyNetwork(@Param("networkSeq") Long networkSeq, @Param("userSeq") Long userSeq);
     List<MyQrCodeRes> getMyQrCodeListByNetwork(@Param("networkSeq")Long networkSeq, @Param("cond")QrCodeSearchCond cond, @Param("userSeq") Long userSeq);
+    int deactivateQrCode(@Param("qrCodeSeq") Long qrCodeSeq, @Param("req") DeactivateQrCodeReq req, @Param("userSeq") Long userSeq);
 
 }
