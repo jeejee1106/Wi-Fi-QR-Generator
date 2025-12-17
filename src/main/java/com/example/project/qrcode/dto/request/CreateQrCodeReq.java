@@ -11,10 +11,6 @@ import java.time.LocalDate;
 @Schema(description = "QR 코드 생성")
 public class CreateQrCodeReq {
 
-    @Schema(description = "네트워크 고유번호", example = "1")
-    @NotNull
-    private Long networkSeq;
-
     @Schema(description = "만료일", example = "2025-11-25")
     private LocalDate expiresAt;
 

@@ -7,8 +7,8 @@ import com.example.project.qrcode.dto.response.WifiConnectRes;
 
 public interface QrCodeService {
 
-    CreateQrCodeRes createQrCode(CreateQrCodeReq req);
-    CreateQrCodeRes createQrCodeWithUrlContent(CreateQrCodeReq req);
+    CreateQrCodeRes createQrCode(Long networkSeq, CreateQrCodeReq req);
+    CreateQrCodeRes createQrCodeWithUrlContent(Long networkSeq, CreateQrCodeReq req);
     CreateQrCodeRes createAnonymousQrCode(CreateAnonymousQrReq req);
     WifiConnectRes scanWifiQr(Long qrCodeSeq);
 

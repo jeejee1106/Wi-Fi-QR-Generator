@@ -22,9 +22,9 @@ public class QrCodeController {
 
     private final QrCodeService qrCodeService;
 
-    @PostMapping()
-    public ResponseEntity<CreateQrCodeRes> createQrCode(@Valid @RequestBody CreateQrCodeReq req) {
-        CreateQrCodeRes res = qrCodeService.createQrCode(req);
+    @PostMapping("/{networkSeq}")
+    public ResponseEntity<CreateQrCodeRes> createQrCode(@PathVariable Long networkSeq, @Valid @RequestBody CreateQrCodeReq req) {
+        CreateQrCodeRes res = qrCodeService.createQrCode(networkSeq, req);
 
         return ResponseEntity
                 .created(URI.create("/api/qr-codes/"))
@@ -32,9 +32,9 @@ public class QrCodeController {
     }
 
     //위는 와이파이 주소 자체로 qr 생성. 이건 url로 qr 생성
-    @PostMapping("/url")
-    public ResponseEntity<CreateQrCodeRes> createQrCodeWithUrlContent(@Valid @RequestBody CreateQrCodeReq req) {
-        CreateQrCodeRes res = qrCodeService.createQrCodeWithUrlContent(req);
+    @PostMapping("/{networkSeq}/url")
+    public ResponseEntity<CreateQrCodeRes> createQrCodeWithUrlContent(@PathVariable Long networkSeq, @Valid @RequestBody CreateQrCodeReq req) {
+        CreateQrCodeRes res = qrCodeService.createQrCodeWithUrlContent(networkSeq, req);
 
         return ResponseEntity
                 .created(URI.create("/api/qr-codes/"))

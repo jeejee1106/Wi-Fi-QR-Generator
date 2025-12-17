@@ -29,7 +29,7 @@
         )
     </insert>
 
-    <select id="getNetworkById" resultType="com.example.project.network.dto.response.AddNetworkRes">
+    <select id="getNetworkById">
         SELECT
               network_seq
             , user_seq

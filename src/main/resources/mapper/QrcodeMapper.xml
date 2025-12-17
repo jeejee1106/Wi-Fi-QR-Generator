@@ -22,6 +22,7 @@
     </insert>
 
     <insert id="insertEmptyQrCode" useGeneratedKeys="true" keyProperty="qrCodeSeq">
+        /* QrCodeMapper.insertEmptyQrCode */
         INSERT INTO wifi_qr_code (network_seq, guest_yn)
         VALUES (#{networkSeq}, 'N');
     </insert>

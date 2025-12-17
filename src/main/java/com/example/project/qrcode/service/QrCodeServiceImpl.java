@@ -6,7 +6,6 @@ import com.example.project.common.security.crypto.WifiPasswordEncryptor;
 import com.example.project.common.util.QrImageGenerator;
 import com.example.project.common.util.WifiQrContentBuilder;
 import com.example.project.network.dto.request.AddNetworkReq;
-import com.example.project.network.dto.response.AddNetworkRes;
 import com.example.project.network.mapper.NetworkMapper;
 import com.example.project.qrcode.domain.QrCode;
 import com.example.project.qrcode.dto.request.CreateAnonymousQrReq;
@@ -15,7 +14,9 @@ import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import com.example.project.qrcode.dto.response.CreateQrCodeRes;
 import com.example.project.qrcode.dto.response.WifiConnectRes;
 import com.example.project.qrcode.mapper.QrCodeMapper;
+import com.example.project.qrcode.mapper.dto.QrCodeInsertParam;
 import com.example.project.qrcode.service.dto.QrContentBundle;
+import com.example.project.qrcode.service.dto.QrNetworkInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,25 +45,29 @@ public class QrCodeServiceImpl implements QrCodeService {
 
     @Override
     @Transactional
-    public CreateQrCodeRes createQrCode(CreateQrCodeReq req) {
+    public CreateQrCodeRes createQrCode(Long networkSeq, CreateQrCodeReq req) {
 
-        AddNetworkRes networkRes = networkMapper.getNetworkById(req);
+        QrNetworkInfo networkInfo = networkMapper.getNetworkById(networkSeq);
+
+        if (networkInfo == null) {
+            throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND);
+        }
 
         //1. 비밀번호 여부 체크 및 암복호화 저장
-        String encryptedPw = networkRes.getPassword(); //암호화 password
+        String encryptedPw = networkInfo.getPassword(); //암호화 password
         boolean hasPassword = encryptedPw != null && !encryptedPw.isBlank();
         String decryptedPw = hasPassword ? wifiPasswordEncryptor.decrypt(encryptedPw) : null; //복호화 password
 
-        String ssid = networkRes.getSsid();
-        String authType = hasPassword ? networkRes.getAuthType() : "nopass";
-        String hiddenYn = networkRes.getHiddenYn();
+        String ssid = networkInfo.getSsid();
+        String authType = hasPassword ? networkInfo.getAuthType() : "nopass";
+        String hiddenYn = networkInfo.getHiddenYn();
 
         //3. qr생성 및 db용 qrContents 생성
         QrContentBundle qrContentBundle = generateQrCodeAndQrContents(ssid, decryptedPw, encryptedPw, authType, hiddenYn);
 
         //4. DB 저장
         CreateQrCodeRes createQrCodeRes = CreateQrCodeRes.of(
-                req.getNetworkSeq(),
+                networkSeq,
                 qrContentBundle.getQrContent(),// DB에는 암호문 버전 저장
                 qrContentBundle.getImagePath(),
                 req.getExpiresAt(),
@@ -75,15 +80,17 @@ public class QrCodeServiceImpl implements QrCodeService {
 
     @Override
     @Transactional
-    public CreateQrCodeRes createQrCodeWithUrlContent(CreateQrCodeReq req) {
+    public CreateQrCodeRes createQrCodeWithUrlContent(Long networkSeq, CreateQrCodeReq req) {
 
         // 1. 네트워크 정보 조회
-        AddNetworkRes networkRes = networkMapper.getNetworkById(req);
-        String ssid = networkRes.getSsid();
+        QrNetworkInfo networkInfo = networkMapper.getNetworkById(networkSeq);
+        String ssid = networkInfo.getSsid();
+
+        QrCodeInsertParam insertParam = new QrCodeInsertParam(networkSeq);
 
         // 2. 먼저 QR row를 INSERT 해서 시퀀스 번호 생성
-        qrCodeMapper.insertEmptyQrCode(req);
-        Long qrCodeSeq = req.getQrCodeSeq();
+        qrCodeMapper.insertEmptyQrCode(insertParam);
+        Long qrCodeSeq = insertParam.getQrCodeSeq();
 
         // 3. URL 생성
         String qrUrl = qrBaseUrl + "/qr/url/" + qrCodeSeq;
@@ -99,7 +106,7 @@ public class QrCodeServiceImpl implements QrCodeService {
         // 6. 반환
         return new CreateQrCodeRes(
                 qrCodeSeq,
-                req.getNetworkSeq(),
+                networkSeq,
                 qrUrl,
                 imagePath,
                 req.getExpiresAt(),
@@ -175,20 +182,20 @@ public class QrCodeServiceImpl implements QrCodeService {
 
         //4. 연결된 네트워크 조회
         Long networkSeq = qrCode.getNetworkSeq();
-        AddNetworkRes networkRes = networkMapper.getNetworkById(networkSeq);
-        if (networkRes == null) {
+        QrNetworkInfo networkInfo = networkMapper.getNetworkById(networkSeq);
+        if (networkInfo == null) {
             throw new BusinessException(ErrorCode.NETWORK_NOT_FOUND); //404
         }
 
         //5. 비밀번호 복호화
-        String decryptedPw = wifiPasswordEncryptor.decrypt(networkRes.getPassword());
+        String decryptedPw = wifiPasswordEncryptor.decrypt(networkInfo.getPassword());
 
         //6. 응답 DTO 생성
         return WifiConnectRes.builder()
-                .ssid(networkRes.getSsid())
+                .ssid(networkInfo.getSsid())
                 .password(decryptedPw)
-                .authType(networkRes.getAuthType())
-                .hiddenYn(networkRes.getHiddenYn())
+                .authType(networkInfo.getAuthType())
+                .hiddenYn(networkInfo.getHiddenYn())
                 .build();
     }
 
