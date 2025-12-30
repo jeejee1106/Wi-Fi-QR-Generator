@@ -9,7 +9,6 @@ import com.example.project.mypage.dto.response.*;
 import com.example.project.mypage.mapper.MyNetworkMapper;
 import com.example.project.mypage.dto.request.DeactivateQrCodeReq;
 import com.example.project.qrcode.dto.request.QrCodeSearchCond;
-import com.example.project.qrcode.mapper.QrCodeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,6 @@ import java.util.List;
 public class MyNetworkServiceImpl implements MyNetworkService {
 
     private final MyNetworkMapper myNetworkMapper;
-    private final QrCodeMapper qrCodeMapper;
     private final WifiPasswordEncryptor wifiPasswordEncryptor;
 
     @Override
