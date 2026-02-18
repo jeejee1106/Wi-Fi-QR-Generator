@@ -1,7 +1,7 @@
 package com.example.project.common.security;
 
-import com.example.project.user.domain.User;
-import com.example.project.user.mapper.UserMapper;
+import com.example.project.auth.domain.Auth;
+import com.example.project.auth.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserMapper userMapper;
+    private final AuthMapper authMapper;
 
     @Override
     public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userMapper.findByEmail(email);
-        if (user == null) {
+        Auth auth = authMapper.findByEmail(email);
+        if (auth == null) {
             throw new UsernameNotFoundException("User not found: " + email);
         }
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(auth);
     }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.project.user.mapper.UserMapper">
+<mapper namespace="com.example.project.auth.mapper.AuthMapper">
 
-    <resultMap id="UserResultMap" type="com.example.project.user.domain.User">
+    <resultMap id="UserResultMap" type="com.example.project.auth.domain.Auth">
         <id     property="userSeq" column="user_seq"/>
         <result property="email"   column="email"/>
         <result property="password" column="password"/>
@@ -30,7 +30,7 @@
     </select>
 
     <!-- 회원 저장 -->
-    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userSeq" parameterType="com.example.project.user.dto.request.UserJoinReq">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userSeq" parameterType="com.example.project.auth.dto.request.SignInReq">
 
         INSERT INTO users (
             email,

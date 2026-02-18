@@ -1,4 +1,4 @@
-package com.example.project.user.dto.request;
+package com.example.project.auth.dto.request;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Schema(description = "회원가입")
-public class UserJoinReq {
+public class SignInReq {
 
     @Schema(description = "이메일", example = "example@test.com")
     @NotNull

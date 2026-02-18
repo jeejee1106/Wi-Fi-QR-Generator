@@ -1,6 +1,6 @@
 package com.example.project.common.security;
 
-import com.example.project.user.domain.User;
+import com.example.project.auth.domain.Auth;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,22 +12,22 @@ import java.util.List;
 @Getter
 public class CustomUserDetails implements UserDetails{
 
-    private final User user;
+    private final Auth auth;
 
-    public CustomUserDetails(User user) { this.user = user; }
+    public CustomUserDetails(Auth auth) { this.auth = auth; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole()));
+        return List.of(new SimpleGrantedAuthority(auth.getRole()));
     }
 
     @Override
-    public String getPassword() { return user.getPassword(); }
+    public String getPassword() { return auth.getPassword(); }
 
     @Override
-    public String getUsername() { return user.getEmail(); }
+    public String getUsername() { return auth.getEmail(); }
 
-    public Long getUserSeq() { return user.getUserSeq(); }
+    public Long getUserSeq() { return auth.getUserSeq(); }
 
 
     @Override
@@ -40,6 +40,6 @@ public class CustomUserDetails implements UserDetails{
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() { return "N".equals(user.getDelYn()); }
+    public boolean isEnabled() { return "N".equals(auth.getDelYn()); }
 
 }

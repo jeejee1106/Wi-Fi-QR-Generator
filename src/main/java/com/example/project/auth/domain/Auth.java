@@ -1,11 +1,11 @@
-package com.example.project.user.domain;
+package com.example.project.auth.domain;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class User {
+public class Auth {
 
     private Long userSeq;
     private String email;

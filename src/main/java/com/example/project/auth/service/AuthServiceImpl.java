@@ -1,10 +1,10 @@
-package com.example.project.user.service;
+package com.example.project.auth.service;
 
 import com.example.project.common.exception.BusinessException;
 import com.example.project.common.exception.ErrorCode;
-import com.example.project.user.dto.request.UserJoinReq;
-import com.example.project.user.dto.response.UserJoinRes;
-import com.example.project.user.mapper.UserMapper;
+import com.example.project.auth.dto.request.SignInReq;
+import com.example.project.auth.dto.response.SignInRes;
+import com.example.project.auth.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -16,17 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 
-    private final UserMapper userMapper;
+    private final AuthMapper authMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public UserJoinRes userJoin(UserJoinReq req) {
+    public SignInRes userJoin(SignInReq req) {
 
         //1. 이메일 중복 체크
-        int count = userMapper.existsByEmail(req.getEmail());
+        int count = authMapper.existsByEmail(req.getEmail());
         if (count > 0) {
             throw new BusinessException(ErrorCode.USER_EMAIL_DUPLICATED); //409
         }
@@ -37,13 +37,13 @@ public class UserServiceImpl implements UserService {
 
         //3. db 저장
         try {
-            userMapper.insertUser(req);
+            authMapper.insertUser(req);
         } catch (DuplicateKeyException e) {
             // // race condition 등으로 인해 동시에 insert 시도된 경우
             log.warn("Duplicate email detected on insert. email={}", req.getEmail(), e);
             throw new BusinessException(ErrorCode.USER_EMAIL_DUPLICATED); //409
         }
 
-        return UserJoinRes.of(req);
+        return SignInRes.of(req);
     }
 }

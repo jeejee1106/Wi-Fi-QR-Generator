@@ -1,11 +1,11 @@
-package com.example.project.user.controller;
+package com.example.project.auth.controller;
 
 import com.example.project.common.security.JwtTokenProvider;
-import com.example.project.user.dto.request.UserJoinReq;
-import com.example.project.user.dto.request.UserLoginReq;
-import com.example.project.user.dto.response.UserJoinRes;
-import com.example.project.user.dto.response.UserLoginRes;
-import com.example.project.user.service.UserService;
+import com.example.project.auth.dto.request.SignInReq;
+import com.example.project.auth.dto.request.LoginReq;
+import com.example.project.auth.dto.response.SignInRes;
+import com.example.project.auth.dto.response.LoginRes;
+import com.example.project.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "USER API", description = "유저 관리 API")
-@RequestMapping("/user")
-public class UserController {
+@Tag(name = "AUTH API", description = "인증 관리 API")
+@RequestMapping("/auth")
+public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping()
-    public ResponseEntity<UserJoinRes> userJoin(@Valid @RequestBody UserJoinReq req) {
-        UserJoinRes res = userService.userJoin(req);
+    public ResponseEntity<SignInRes> userJoin(@Valid @RequestBody SignInReq req) {
+        SignInRes res = authService.userJoin(req);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -39,14 +39,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginRes> userLogin(@Valid @RequestBody UserLoginReq req) {
+    public ResponseEntity<LoginRes> userLogin(@Valid @RequestBody LoginReq req) {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(authToken); //이 한 줄에서 유저 조회, 비밀번호 비교, 인증된 principal 세팅까지 모두 자동 처리됨.
         String token = jwtTokenProvider.createToken(authentication);
 
-        return ResponseEntity.ok(new UserLoginRes(token, "Bearer"));
+        return ResponseEntity.ok(new LoginRes(token, "Bearer"));
     }
 
 }

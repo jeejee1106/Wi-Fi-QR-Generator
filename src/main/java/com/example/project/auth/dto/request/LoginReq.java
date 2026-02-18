@@ -1,14 +1,12 @@
-package com.example.project.user.dto.request;
+package com.example.project.auth.dto.request;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Schema(description = "로그인")
-public class UserLoginReq {
+public class LoginReq {
 
     @Schema(description = "이메일", example = "example@test.com")
     @NotNull

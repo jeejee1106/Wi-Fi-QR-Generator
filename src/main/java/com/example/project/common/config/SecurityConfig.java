@@ -28,9 +28,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // 일단 개발 단계에선 끔
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/", "/user/login","/qr/anonymous", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/user").permitAll()   // POST /user 허용
-                    .requestMatchers(HttpMethod.GET, "/user").authenticated() // GET /user 인증 필요
+                    .requestMatchers("/", "/auth/**","/qr/anonymous", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//                    .requestMatchers(HttpMethod.POST, "/auth").permitAll()   // POST /user 허용
+//                    .requestMatchers(HttpMethod.GET, "/user").authenticated() // GET /user 인증 필요
                     .anyRequest().authenticated()
             )
             // JWT 필터 등록 부분!!
