@@ -14,6 +14,7 @@ import com.example.project.qrcode.dto.request.QrCodeSearchCond;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,22 +30,24 @@ public class MyPageController {
      * 내가 등록한 Wi-Fi 네트워크 목록 조회
      */
     @GetMapping("/networks")
-    public MyNetworkListRes getMyNetworkList(@Valid MyNetworkSearchCond cond,
-                                             @AuthenticationPrincipal CustomUserDetails user
+    public ResponseEntity<MyNetworkListRes> getMyNetworkList(@Valid MyNetworkSearchCond cond,
+                                                            @AuthenticationPrincipal CustomUserDetails user
     ) {
         Long userSeq = user.getUserSeq();
-        return myNetworkService.getMyNetworkList(cond, userSeq);
+        MyNetworkListRes res = myNetworkService.getMyNetworkList(cond, userSeq);
+        return ResponseEntity.ok(res);
     }
 
     /**
      * 내 네트워크 단건 조회
      */
     @GetMapping("/networks/{networkSeq}")
-    public MyNetworkDetailRes getMyNetwork(@PathVariable Long networkSeq,
+    public ResponseEntity<MyNetworkDetailRes> getMyNetwork(@PathVariable Long networkSeq,
                                            @AuthenticationPrincipal CustomUserDetails user
     ) {
         Long userSeq = user.getUserSeq();
-        return myNetworkService.getMyNetwork(networkSeq, userSeq);
+        MyNetworkDetailRes res = myNetworkService.getMyNetwork(networkSeq, userSeq);
+        return ResponseEntity.ok(res);
     }
 
     /**
@@ -74,12 +77,13 @@ public class MyPageController {
      * 내 네트워크에 등록된 QRCODE 조회
      */
     @GetMapping("/networks/{networkSeq}/qrs")
-    public MyQrCodeListRes getMyQrListByNetwork(@PathVariable Long networkSeq,
+    public ResponseEntity<MyQrCodeListRes> getMyQrListByNetwork(@PathVariable Long networkSeq,
                                      @RequestBody @Valid QrCodeSearchCond cond,
                                      @AuthenticationPrincipal CustomUserDetails user
     ) {
         Long userSeq = user.getUserSeq();
-        return myNetworkService.getMyQrCodeListByNetwork(networkSeq, cond, userSeq);
+        MyQrCodeListRes res = myNetworkService.getMyQrCodeListByNetwork(networkSeq, cond, userSeq);
+        return ResponseEntity.ok(res);
     }
 
     /**
